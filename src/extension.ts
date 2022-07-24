@@ -43,16 +43,16 @@ export async function activate(context: vscode.ExtensionContext) {
 const getAuth0Session = async () => {
 	const session = await vscode.authentication.getSession("auth0", [], { createIfNone: false });
 	if (session) {
-		vscode.window.showInformationMessage(`Welcome back ${session.account.label}`)
+		vscode.window.showInformationMessage(`Welcome back ${session.account.label}`);
 	}
-}
+};
 
 const getSession = async () => {
 	const session = await vscode.authentication.getSession(AUTH_TYPE, [], { createIfNone: false });
 	if (session) {
-		vscode.window.showInformationMessage(`Welcome back ${session.account.label}`)
+		vscode.window.showInformationMessage(`Welcome back ${session.account.label}`);
 	}
-}
+};
 
 const getMsSession = async () => {
 	const session = await vscode.authentication.getSession('microsoft', [
@@ -62,9 +62,9 @@ const getMsSession = async () => {
 	], { createIfNone: false });
 
 	if (session) {
-		vscode.window.showInformationMessage(`Welcome back ${session.account.label}`)
+		vscode.window.showInformationMessage(`Welcome back ${session.account.label}`);
 	}
-}
+};
 
 const getMsDefaultSession = async () => {
 	const session = await vscode.authentication.getSession('microsoft', [
@@ -73,9 +73,9 @@ const getMsDefaultSession = async () => {
 	], { createIfNone: false });
 
 	if (session) {
-		vscode.window.showInformationMessage(`Welcome back ${session.account.label}`)
+		vscode.window.showInformationMessage(`Welcome back ${session.account.label}`);
 	}
-}
+};
 
 // this method is called when your extension is deactivated
 export function deactivate() { }

@@ -1,13 +1,15 @@
+import 'dotenv/config';
 import fetch from 'node-fetch';
 import { v4 as uuid } from 'uuid';
 import { authentication, AuthenticationProvider, AuthenticationProviderAuthenticationSessionsChangeEvent, AuthenticationSession, Disposable, env, EventEmitter, ExtensionContext, ProgressLocation, Uri, UriHandler, window } from "vscode";
 import { PromiseAdapter, promiseFromEvent } from "./utils";
 
 export const AUTH_TYPE = `auth0`;
-const AUTH_NAME = `Auth0`;
-const CLIENT_ID = `bJchOh8CfxG7ElYa5BqEOE2DhjA59l8L`;
-const AUTH0_DOMAIN = `dev-aeb9-zjq.us.auth0.com`;
-const SESSIONS_SECRET_KEY = `${AUTH_TYPE}.sessions2`;
+const AUTH_NAME = `Ktime`;
+const CLIENT_ID = process.env.AUTH0_CLIENT_ID as string;
+const AUTH0_DOMAIN = process.env.AUTH0_DOMAIN as string;
+const SESSIONS_SECRET_KEY = `${AUTH_TYPE}.sessions4`;
+
 class UriEventHandler extends EventEmitter<Uri> implements UriHandler {
     public handleUri(uri: Uri) {
         this.fire(uri);
@@ -25,7 +27,7 @@ export class Auth0AuthenticationProvider implements AuthenticationProvider, Disp
         this._disposable = Disposable.from(
             authentication.registerAuthenticationProvider(AUTH_TYPE, AUTH_NAME, this, { supportsMultipleAccounts: false }),
             window.registerUriHandler(this._uriHandler)
-        )
+        );
     }
 
     get onDidChangeSessions() {
@@ -65,7 +67,7 @@ export class Auth0AuthenticationProvider implements AuthenticationProvider, Disp
                 throw new Error(`Auth0 login failure`);
             }
 
-            const userinfo: { name: string, email: string } = await this.getUserInfo(token) as { name: string, email: string }
+            const userinfo: { name: string, email: string } = await this.getUserInfo(token) as { name: string, email: string };
 
             const session: AuthenticationSession = {
                 id: uuid(),
@@ -77,7 +79,7 @@ export class Auth0AuthenticationProvider implements AuthenticationProvider, Disp
                 scopes: []
             };
 
-            await this.context.secrets.store(SESSIONS_SECRET_KEY, JSON.stringify([session]))
+            await this.context.secrets.store(SESSIONS_SECRET_KEY, JSON.stringify([session]));
 
             this._sessionChangeEmitter.fire({ added: [session], removed: [], changed: [] });
 
@@ -198,7 +200,7 @@ export class Auth0AuthenticationProvider implements AuthenticationProvider, Disp
             }
 
             resolve(access_token);
-        }
+        };
 
     /**
      * Get the user info from Auth0
@@ -206,6 +208,7 @@ export class Auth0AuthenticationProvider implements AuthenticationProvider, Disp
      * @returns
      */
     private async getUserInfo(token: string) {
+        console.log(token);
         const response = await fetch(`https://${AUTH0_DOMAIN}/userinfo`, {
             headers: {
                 Authorization: `Bearer ${token}`

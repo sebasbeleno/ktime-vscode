@@ -1,9 +1,11 @@
+import fetch from 'node-fetch';
 import * as vscode from 'vscode';
 
 class Ktime {
 
-    private lastFile: string = "";
-    private lastHeartbeat: number = 0;
+    private lastFile: string = vscode.window.activeTextEditor?.document.fileName || '';
+    private lastHeartbeat: number = Date.now();
+    private lastLanguage: string = vscode.window.activeTextEditor?.document.languageId || '';
 
     constructor() {
         console.log("Ktime initialized");
@@ -46,10 +48,12 @@ class Ktime {
 
                     if (write || this.enoughTimePassed(time) || this.lastFile !== file) {
 
-                        this.sendHeartBeat(time, file);
-                        // TODO: Heartbeat
-                        this.lastFile = file;
-                        this.lastHeartbeat = time;
+                        this.sendHeartBeat(time, this.lastFile, this.lastLanguage).then(() => {
+                            // TODO: Heartbeat
+                            this.lastFile = file;
+                            this.lastHeartbeat = time;
+                            this.lastLanguage = doc.languageId;
+                        });
                     }
                 }
             }
@@ -60,8 +64,49 @@ class Ktime {
         return this.lastHeartbeat + 120000 < time;
     }
 
-    private sendHeartBeat(time: number, file: string) {
+    private getCurrentFolderName(): string {
+        let folder = vscode.workspace.workspaceFolders;
+        if (folder) {
+            return folder[0].name;
+        }
+        return "";
+    }
+
+    private async sendHeartBeat(time: number, file: string, language: string) {
         const timeSpend = time - this.lastHeartbeat;
+
+        const uri = 'http://localhost:3000/api/heartbeat';
+
+        const body = {
+            timeSpend: timeSpend,
+            filePath: file.toString(),
+            language: language,
+            projectFolder: this.getCurrentFolderName()
+        };
+
+        const session = await vscode.authentication.getSession('auth0', [], { createIfNone: false });
+        if (session) {
+            const token = session.accessToken;
+            fetch(uri, {
+                method: 'POST',
+                body: JSON.stringify(body),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + token
+                }
+            }).then(res => {
+                const status = res.status;
+
+                console.log(status);
+            }).catch(err => {
+                console.log(err);
+            }).finally(() => {
+                console.log('finally');
+            });
+        } else {
+            console.log("No session");
+        }
+
 
         console.log(`Heartbeat: ${timeSpend}ms`);
         console.log(`File: ${file}`);
