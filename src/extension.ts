@@ -23,16 +23,16 @@ export async function activate(context: vscode.ExtensionContext) {
 	// getMsSession();
 	// getMsDefaultSession();
 
-	getAuth0Session();
+	getAuth0Session(authprovider);
 
 	subscriptions.push(
 		vscode.authentication.onDidChangeSessions(async e => {
 			console.log(e);
 
 			if (e.provider.id === AUTH_TYPE) {
-				getSession();
+				getSession(authprovider);
 			} else if (e.provider.id === "auth0") {
-				getAuth0Session();
+				getAuth0Session(authprovider);
 			}
 		})
 	);
@@ -40,17 +40,41 @@ export async function activate(context: vscode.ExtensionContext) {
 	ktime.initialize();
 }
 
-const getAuth0Session = async () => {
+const getAuth0Session = async (authprovider: Auth0AuthenticationProvider) => {
 	const session = await vscode.authentication.getSession("auth0", [], { createIfNone: false });
 	if (session) {
 		vscode.window.showInformationMessage(`Welcome back ${session.account.label}`);
+	} else {
+		const answer = await vscode.window.showInformationMessage(
+			"You are not signed in. Would you like to sign in?",
+			"Yes",
+			"No"
+		);
+
+		if (answer === "Yes") {
+			await authprovider.createSession([]);
+		} else {
+			vscode.window.showInformationMessage("You can sign in later, but remember that all your data will be lost.");
+		}
 	}
 };
 
-const getSession = async () => {
+const getSession = async (authprovider: Auth0AuthenticationProvider) => {
 	const session = await vscode.authentication.getSession(AUTH_TYPE, [], { createIfNone: false });
 	if (session) {
 		vscode.window.showInformationMessage(`Welcome back ${session.account.label}`);
+	} else {
+		const answer = await vscode.window.showInformationMessage(
+			"You are not signed in. Would you like to sign in?",
+			"Yes",
+			"No"
+		);
+
+		if (answer === "Yes") {
+			await authprovider.createSession([]);
+		} else {
+			vscode.window.showInformationMessage("You can sign in later, but remember that all your data will be lost.");
+		}
 	}
 };
 
