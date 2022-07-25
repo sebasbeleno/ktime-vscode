@@ -7,17 +7,17 @@ var ktime: Ktime;
 export async function activate(context: vscode.ExtensionContext) {
 	const subscriptions = context.subscriptions;
 
-	ktime = new Ktime();
-
 	// subscriptions.push(
 	// 	new AzureADAuthenticationProvider(context)
 	// );
 
-
+	const authprovider = new Auth0AuthenticationProvider(context);
 
 	subscriptions.push(
-		new Auth0AuthenticationProvider(context)
+		authprovider
 	);
+
+	ktime = new Ktime(authprovider);
 
 	// getSession();
 	// getMsSession();
