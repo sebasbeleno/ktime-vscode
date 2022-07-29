@@ -1,5 +1,4 @@
 import axios from 'axios';
-import 'dotenv/config';
 import fetch from 'node-fetch';
 import { v4 as uuid } from 'uuid';
 import { authentication, AuthenticationProvider, AuthenticationProviderAuthenticationSessionsChangeEvent, AuthenticationSession, Disposable, env, EventEmitter, ExtensionContext, ProgressLocation, Uri, UriHandler, window } from "vscode";
@@ -9,7 +8,7 @@ export const AUTH_TYPE = `auth0`;
 const AUTH_NAME = `Ktime`;
 const CLIENT_ID = process.env.AUTH0_CLIENT_ID as string;
 const AUTH0_DOMAIN = process.env.AUTH0_DOMAIN as string;
-const SESSIONS_SECRET_KEY = `${AUTH_TYPE}.sessions5`;
+const SESSIONS_SECRET_KEY = `${AUTH_TYPE}.sessions55`;
 
 class UriEventHandler extends EventEmitter<Uri> implements UriHandler {
     public handleUri(uri: Uri) {

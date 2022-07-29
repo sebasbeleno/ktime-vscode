@@ -69,7 +69,7 @@ class Ktime {
 
         console.log(`Time passed: ${time - this.lastHeartbeat}`);
 
-        return time - this.lastHeartbeat > 10000;
+        return time - this.lastHeartbeat > 5000;
     }
 
     private getCurrentFolderName(): string {
@@ -84,7 +84,7 @@ class Ktime {
         await this.AuthProvider.checkAccestToken();
 
         const timeSpend = time - this.lastHeartbeat;
-        const uri = 'http://localhost:3000/api/heartbeat';
+        const uri = 'https://ktime-web.vercel.app/api/heartbeat';
         var dateObj = new Date();
         const body = {
             timeSpend: timeSpend,
