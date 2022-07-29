@@ -2,7 +2,7 @@
   "name": "ktime",
   "displayName": "ktime",
   "description": "",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "publisher": "sebasbeleno",
   "engines": {
     "vscode": "^1.69.0"
