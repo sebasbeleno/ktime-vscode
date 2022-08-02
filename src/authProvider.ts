@@ -8,7 +8,7 @@ export const AUTH_TYPE = `auth0`;
 const AUTH_NAME = `Ktime`;
 const CLIENT_ID = process.env.AUTH0_CLIENT_ID as string;
 const AUTH0_DOMAIN = process.env.AUTH0_DOMAIN as string;
-const SESSIONS_SECRET_KEY = `${AUTH_TYPE}.sessions55`;
+const SESSIONS_SECRET_KEY = `${AUTH_TYPE}`;
 
 class UriEventHandler extends EventEmitter<Uri> implements UriHandler {
     public handleUri(uri: Uri) {
